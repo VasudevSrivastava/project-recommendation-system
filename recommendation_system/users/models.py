@@ -8,3 +8,6 @@ class Profile(models.Model):
     about = models.CharField(max_length=100, blank = True)
     image = models.ImageField()
     skills = models.ManyToManyField(Skill)
+
+    def __str__(self):
+        return f"{self.user}"

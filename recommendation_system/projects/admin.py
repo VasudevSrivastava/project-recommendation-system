@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Project, SavedProject, Rating
+
+admin.site.register(Project)
+admin.site.register(SavedProject)
+admin.site.register(Rating)
