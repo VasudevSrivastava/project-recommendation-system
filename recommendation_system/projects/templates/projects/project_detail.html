@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <div class="container mt-4" >
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h4 class="card-title">
+                    {{project.title}}
+                </h4>
+                <h6 class="text-muted"> Created By {{project.user}} on {{project.created_at|date:"M d, Y"}}</h6>
+                <h5> <strong> Skills Required: </strong>
+                    {% for skill in project.skill.all %}
+                        <span class="badge bg-secondary"> {{skill.name}} </span>
+                    {% endfor %}
+                </h5>
+                <p class="card-text">{{project.description}}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{project.github_link}}" class="btn btn-primary btn-sm" target="_blank">
+                          View on Github
+                    </a>
+                    <span class="text-muted" > <i class="bi bi-eye"></i> 👁️ {{project.views}} views </span>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+          <a href="{% url 'project-list'%}" class="btn btn-outline-secondary" > - Back to Projects </a> 
+        </div>
+    </div>
+                
+{% endblock %}
