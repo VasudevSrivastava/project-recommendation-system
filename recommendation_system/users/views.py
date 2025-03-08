@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
+from projects.models import SavedProject
 
 def register(request):
     if request.method == 'POST':
@@ -17,6 +18,15 @@ def register(request):
 
 @login_required
 def profile(request):
+    saved_projects= SavedProject.objects.all().filter(user=request.user)
+    context = {
+        'saved_projects':saved_projects,
+    }
+    return render(request, 'users/profile.html', context)
+    
+
+@login_required
+def update_profile(request):
     if request.method=='POST':
         u_form = UserUpdateForm(request.POST,instance=request.user)
         p_form = ProfileUpdateForm(request.POST,
@@ -35,6 +45,4 @@ def profile(request):
         'u_form':u_form,
         'p_form':p_form,
     }
-    return render(request, 'users/profile.html', context)
-    
-
+    return render(request, 'users/update_profile.html', context)
