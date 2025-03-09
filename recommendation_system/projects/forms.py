@@ -1,4 +1,4 @@
-from .models import Project
+from .models import Project, Rating
 from django.forms import ModelForm
 from django import forms
 
@@ -9,3 +9,8 @@ class ProjectForm(ModelForm):
         widgets = {
             "skill":forms.SelectMultiple(attrs={"class":"form-control"})
         }
+
+class RatingForm(ModelForm):
+    class Meta:
+        model = Rating
+        fields = ["rating"]

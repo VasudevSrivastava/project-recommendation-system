@@ -1,41 +1,105 @@
 {% extends 'core/base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="container mt-5 d-flex justify-content-center">
-        <div class="card shadow-lg p-4" style="max-width: 50rem; width: 100%;">
-            <div class="card-body">
-                <h4 class="card-title">
-                    {{project.title}}
-                </h4>
-                <h6 class="text-muted"> Created By {{project.user}} on {{project.created_at|date:"M d, Y"}}</h6>
-                <h5 class=" mt-3 "> <strong> Skills Required: </strong>
-                    {% for skill in project.skill.all %}
-                        <span class="badge bg-secondary"> {{skill.name}} </span>
-                    {% endfor %}
-                </h5>
-                <p class="card-text mt-4">{{project.description}}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <a href="{{project.github_link}}" class="btn btn-primary btn-sm" target="_blank">
-                          View on Github
-                    </a>
-                    <span class="text-muted" > <i class="bi bi-eye"></i> 👁️ {{project.views}} views </span>
-                </div>
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="max-width: 50rem; width: 100%;">
+        <div class="card-body">
+            <h2 class="card-title text-primary font-weight-bold">{{ project.title }}</h2>
+            <h6 class="text-muted">Created by <strong>{{ project.user }}</strong> on {{ project.created_at|date:"M d, Y" }}</h6>
+
+            <!-- Skills Required -->
+            <h5 class="mt-3"><strong>Skills Required:</strong></h5>
+            {% for skill in project.skill.all %}
+                <span class="badge bg-secondary me-1">{{ skill.name }}</span>
+            {% empty %}
+                <p class="text-muted">No skills specified.</p>
+            {% endfor %}
+
+            <!-- Project Description -->
+            <p class="card-text mt-4">{{ project.description }}</p>
+
+            <!-- Rating & Views Section -->
+            <div class="d-flex flex-column align-items-end mt-3">
+                {% if rating %}
+                    <h5 class="text-warning fw-bold">{{ rating }} ⭐</h5>
+                {% endif %}
+                <span class="text-muted ">👁️ {{ project.views }} views</span>
+            </div>
+
+            <!-- Save/Unsave Project -->
+            <div class="mt-4">
                 {% if is_saved %}
-                    <form action="{% url 'project-unsave' project.id  %}" method='POST'>
+                    <form action="{% url 'project-unsave' project.id %}" method="POST">
                         {% csrf_token %}
-                        <button class="btn btn-outline-danger btn-sm mt-3" type="submit"> Unsave Project </button>
+                        <button class="btn btn-outline-danger btn-sm" type="submit">Unsave Project</button>
                     </form>
                 {% else %}
-                    <form action="{% url 'project-save' project.id  %}" method='POST'>
+                    <form action="{% url 'project-save' project.id %}" method="POST">
                         {% csrf_token %}
-                        <button class="btn btn-outline-info btn-sm mt-3" type="submit"> Save Project </button>
+                        <button class="btn btn-outline-info btn-sm" type="submit">Save Project</button>
                     </form>
                 {% endif %}
             </div>
-        </div>
-        <div class="text-center mt-4">
-          <a href="{% url 'project-list'%}" class="btn btn-outline-secondary" > - Back to Projects </a> 
+            
+            <div class="mt-4">
+                <a href="{{ project.github_link }}" class="btn btn-primary btn-sm" target="_blank">View on GitHub</a>
+            </div>
+
+            <form action="{% url 'project-rate' project.id %}" method="POST" class="mt-4">
+                {% csrf_token %}
+                <h5 class="border-bottom pb-2 mb-3">Rate This Project</h5>
+                <div class="rating d-flex justify-content-center">
+                    <input type="radio" id="star5" name="rating" value="5" {% if user_rating == 5 %}checked{% endif %}>
+                    <label for="star5" title="5 Stars">★</label>
+
+                    <input type="radio" id="star4" name="rating" value="4" {% if user_rating == 4 %}checked{% endif %}>
+                    <label for="star4" title="4 Stars">★</label>
+
+                    <input type="radio" id="star3" name="rating" value="3" {% if user_rating == 3 %}checked{% endif %}>
+                    <label for="star3" title="3 Stars">★</label>
+
+                    <input type="radio" id="star2" name="rating" value="2" {% if user_rating == 2 %}checked{% endif %}>
+                    <label for="star2" title="2 Stars">★</label>
+
+                    <input type="radio" id="star1" name="rating" value="1" {% if user_rating == 1 %}checked{% endif %}>
+                    <label for="star1" title="1 Star">★</label>
+                </div>
+                <button class="btn btn-outline-info btn-sm mt-3" type="submit">Submit Rating</button>
+            </form>
+
+            
         </div>
     </div>
-                
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'project-list' %}" class="btn btn-outline-secondary">← Back to Projects</a>
+</div>
+
+<!-- CSS for Rating Stars -->
+<style>
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        gap: 5px;
+    }
+    .rating input {
+        display: none;
+    }
+    .rating label {
+        font-size: 2rem;
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+    .rating input:checked ~ label,
+    .rating label:hover,
+    .rating label:hover ~ label {
+        color: gold;
+    }
+</style>
+
 {% endblock %}

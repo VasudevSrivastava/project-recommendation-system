@@ -18,7 +18,7 @@ class Project(models.Model):
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    rating = models.IntegerField()
+    rating = models.IntegerField(null=True)
 
     class Meta:
         constraints = [
