@@ -1,12 +1,18 @@
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
 from .models import Project, SavedProject, Rating 
+from skills.models import Skill
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ProjectForm
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect,render
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import ProjectSerializer
+from .recommendation_engine import get_project_recommendations
+import requests
 
 
 
@@ -92,3 +98,35 @@ def rate_project(request,project_id):
     rating_object.save(update_fields=['rating'])
 
     return redirect(reverse('project-detail',kwargs={'pk':project_id}))
+
+
+class ProjectRecommendationView(APIView):
+    def get(self,request):
+        recommended_projects = get_project_recommendations(request.user)
+        project_with_scores = []
+        for project,score in recommended_projects:
+            project.rating = round(Rating.objects.filter(project=project).aggregate(Avg("rating",default=0)).get("rating__avg",0),2)
+            project.similarity_score = round(score,2)
+            project.skill_names = []
+            for skill in project.skill.all():
+                project.skill_names.append(Skill.objects.get(id=skill.id).name)
+            #print(project.rating)
+            
+            project_with_scores.append(project)
+        if not recommended_projects:
+            return Response({"recommendations":[]})
+        
+        serialized_projects = ProjectSerializer(project_with_scores,many=True).data
+        return Response({"recommendations":serialized_projects})
+
+@login_required
+def project_recommendation_view(request):
+    api_url = "http://127.0.0.1:8000/projects/api/recommendations/"
+    response = requests.get(api_url,cookies=request.COOKIES)
+
+    if response.status_code == 200:
+        projects = response.json().get("recommendations",[])
+    else:
+        projects = []
+    print(projects)
+    return render(request,template_name="projects/view_recommendations.html",context={"projects":projects})

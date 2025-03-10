@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h1 class = " mb-4 text-center"> Recommended Projects </h1>
+
+    <div class=" list-group" >
+        {% for project in projects %}
+            <div class="list-group-item list-group-item-action shadow-sm mb-3">
+                <h5 class=" "><a href = "{% url 'project-detail' project.id %}"> {{project.title}} </a>  </h5>
+
+                {% if project.rating %}
+                    <p class="text-muted"> {{project.rating}} ⭐</p>
+                {% endif %}
+
+                <h6 class="mt-2"> Skills Required: </h6>
+
+                {% for skill in project.skill_names%}
+                    <span class="badge bg-warning"> {{skill}} </span>
+                {% endfor %}
+                <p class="card-text">{{project.description|truncatewords:40}}</p>
+                <p class="mt-2"><strong> Score : </strong> {{project.similarity_score}} </p>
+            </div>
+            
+
+        {% endfor %}
+
+</div>
+
+
+
+{% endblock %}
