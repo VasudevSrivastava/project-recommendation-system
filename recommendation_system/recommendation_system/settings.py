@@ -20,12 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9ze!o3h1ysxka7+4_klzxz+_nwlu54gvka9qj#iutm^bq3sw(z'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -149,4 +150,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER= os.environ.get('EMAIL_USER')
-EMAIL_HOST_PASSWORD = 'nwpt mrsm hgtu ywar'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
