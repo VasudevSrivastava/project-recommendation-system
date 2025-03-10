@@ -3,6 +3,7 @@ from django.contrib import messages
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
 from projects.models import SavedProject
+from skills.models import Skill
 
 def register(request):
     if request.method == 'POST':
@@ -19,6 +20,7 @@ def register(request):
 @login_required
 def profile(request):
     saved_projects= SavedProject.objects.all().filter(user=request.user)
+    
     context = {
         'saved_projects':saved_projects,
     }
@@ -36,7 +38,6 @@ def update_profile(request):
             u_form.save()
             p_form.save()
             messages.success(request," Profile updated sucessfully! ")
-            #return render(request, 'users/profile.html')   need to better understand the effects
             return redirect('profile')
     else:
         u_form = UserUpdateForm(instance=request.user)

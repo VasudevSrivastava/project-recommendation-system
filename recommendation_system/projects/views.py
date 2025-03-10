@@ -55,8 +55,22 @@ class ProjectListView(ListView):
     #paginate_by = 10
 
     def get_queryset(self):
-        queryset = Project.objects.annotate(avg_rating=Avg("rating__rating"))
-        return queryset
+        projects = Project.objects.all().annotate(avg_rating=Avg("ratings__rating"))
+
+        filters= self.request.GET.getlist("filters")
+        if filters:
+            projects = projects.filter(skill__name__icontains=filters)
+
+        sort_by = self.request.GET.get("sort",'-created_at')
+        projects = projects.order_by(sort_by)
+
+        return projects
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["skills"] = Skill.objects.all()
+        return context
+        
 
 
 
@@ -104,13 +118,12 @@ class ProjectRecommendationView(APIView):
     def get(self,request):
         recommended_projects = get_project_recommendations(request.user)
         project_with_scores = []
-        for project,score in recommended_projects:
+        for project,score in recommended_projects: # optmize to use annotate.....
             project.rating = round(Rating.objects.filter(project=project).aggregate(Avg("rating",default=0)).get("rating__avg",0),2)
             project.similarity_score = round(score,2)
             project.skill_names = []
             for skill in project.skill.all():
                 project.skill_names.append(Skill.objects.get(id=skill.id).name)
-            #print(project.rating)
             
             project_with_scores.append(project)
         if not recommended_projects:
@@ -128,5 +141,4 @@ def project_recommendation_view(request):
         projects = response.json().get("recommendations",[])
     else:
         projects = []
-    print(projects)
     return render(request,template_name="projects/view_recommendations.html",context={"projects":projects})

@@ -1,11 +1,18 @@
 {% extends "core/base.html" %}
+{% load static %}
+{% block title %}Home Page{% endblock %}
 
-{% block title %} Home Page {% endblock %}
+{% block content %}
+<div class="container vh-95 d-flex align-items-center">
+    <div class="row w-100">
+        <div class="col-md-6 d-flex flex-column justify-content-center">
+            <h1 class="display-4 fw-bold ">Project Recommendation System</h1>
+            <p class="lead text-muted">Discover projects tailored to your skills and interests.</p>
+        </div>
 
-{% block content %} 
-
-    <h1>
-        This the home Page
-    </h1>
-
+        <div class="col-md-6 text-center  mt-5">
+            <img src="{% static 'core\image\hero-img.png' %}" alt="Project Image" class="img-fluid rounded shadow-lg">
+        </div>
+    </div>
+</div>
 {% endblock %}

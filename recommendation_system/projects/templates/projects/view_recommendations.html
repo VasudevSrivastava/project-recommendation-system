@@ -3,11 +3,11 @@
 
 <div class="container mt-4">
 
-    <h1 class = " mb-4 text-center"> Recommended Projects </h1>
-
-    <div class=" list-group" >
+    <h1 class = "mb-4 text-center"> Recommended Projects </h1>
+    <p class = "mb-4 text-center">Update your skills in the profile section to get better recommendations </p>
+    <div class=" list-group justify-content-center" >
         {% for project in projects %}
-            <div class="list-group-item list-group-item-action shadow-sm mb-3">
+            <div class="list-group-item list-group-item-action shadow-sm mb-3 mx-auto" style="width: 700px;">
                 <h5 class=" "><a href = "{% url 'project-detail' project.id %}"> {{project.title}} </a>  </h5>
 
                 {% if project.rating %}
@@ -17,7 +17,7 @@
                 <h6 class="mt-2"> Skills Required: </h6>
 
                 {% for skill in project.skill_names%}
-                    <span class="badge bg-warning"> {{skill}} </span>
+                    <span class="badge bg-info"> {{skill}} </span>
                 {% endfor %}
                 <p class="card-text">{{project.description|truncatewords:40}}</p>
                 <p class="mt-2"><strong> Score : </strong> {{project.similarity_score}} </p>
@@ -27,7 +27,6 @@
         {% endfor %}
 
 </div>
-
 
 
 {% endblock %}

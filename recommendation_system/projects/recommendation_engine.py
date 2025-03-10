@@ -16,7 +16,7 @@ def get_project_recommendations(user):
     
     user_skill_names = set(skill.name for skill in user_skills)
 
-    relevant_projects = Project.objects.filter(skill__name__in=user_skill_names).distinct()
+    relevant_projects = Project.objects.filter(skill__name__in=user_skill_names).distinct().annotate(avg_rating=Avg('ratings__rating'))
     
     if not relevant_projects:
         return []
@@ -28,22 +28,15 @@ def get_project_recommendations(user):
     skill_vectors = vectorizer.fit_transform([user_skill_text] +project_skill_texts)
     similirity_scores = cosine_similarity(skill_vectors[0],skill_vectors[1:]).flatten()
 
-    project_ratings = {
-        project.id : Project.objects.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
-
-        for project in relevant_projects
-    }
-
     ranked_projects = []
 
     for project,score in zip(relevant_projects,similirity_scores):
-        rating = project_ratings.get(project.id,0)
-        final_score = (0.7 * score ) + (0.3 * rating)
+        rating = project.avg_rating or 0
+        final_score = (0.7 * score ) + (0.3 * (rating/5))
         ranked_projects.append((project,final_score))
 
     ranked_projects.sort(key = lambda x: x[1], reverse=True)
     return ranked_projects
-    #return [project for project,_ in ranked_projects]
 
 
 
