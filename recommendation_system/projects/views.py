@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from .serializers import ProjectSerializer
 from .recommendation_engine import get_project_recommendations
 import requests
-
+import os
 
 
 class ProjectCreateView(LoginRequiredMixin,CreateView):
