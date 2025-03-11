@@ -7,15 +7,16 @@
     <!-- Filter & Sorting -->
     <div class="p-3 bg-light rounded shadow-sm mb-4">
         <h5 class="text-dark">Filter Projects</h5>
+        <p class="text-muted"> Hold CTRL to select skills </p>
         <form method="GET" action="{% url 'project-list' %}" class="d-flex flex-wrap gap-3">
-            <select name="filter" class="form-select w-auto" multiple>
+            <select name="filters" class="form-select w-auto" multiple>
                 {% for skill in skills %}
                     <option value="{{ skill.name }}" {% if skill.name in selected_filters %}selected{% endif %}>
                         {{ skill.name|title }}
                     </option>
                 {% endfor %}
             </select>
-
+            <p class="text-dark"> Sort By :</p>
             <select name="sort" class="form-select-sm w-auto" style="height: 35px;" >
                 <option value="-created_at">Newest</option>
                 <option value="created_at">Oldest</option>

@@ -58,9 +58,10 @@ class ProjectListView(ListView):
         projects = Project.objects.all().annotate(avg_rating=Avg("ratings__rating"))
 
         filters= self.request.GET.getlist("filters")
+        
         if filters:
-            projects = projects.filter(skill__name__icontains=filters)
-
+            projects = projects.filter(skill__name__in=filters)
+        print(projects)
         sort_by = self.request.GET.get("sort",'-created_at')
         projects = projects.order_by(sort_by)
 
@@ -134,7 +135,7 @@ class ProjectRecommendationView(APIView):
 
 @login_required
 def project_recommendation_view(request):
-    api_url = "http://127.0.0.1:8000/projects/api/recommendations/"
+    api_url = request.build_absolute_uri(reverse('get-recommendations'))
     response = requests.get(api_url,cookies=request.COOKIES)
 
     if response.status_code == 200:
