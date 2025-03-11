@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
-from projects.models import SavedProject
+from projects.models import SavedProject, Project
 from skills.models import Skill
 
 def register(request):
@@ -19,10 +19,11 @@ def register(request):
 
 @login_required
 def profile(request):
-    saved_projects= SavedProject.objects.all().filter(user=request.user)
-    
+    saved_projects= SavedProject.objects.filter(user=request.user)
+    user_projects = Project.objects.filter(user=request.user)
     context = {
         'saved_projects':saved_projects,
+        'user_projects':user_projects,
     }
     return render(request, 'users/profile.html', context)
     
