@@ -6,6 +6,7 @@ from .forms import ProjectForm
 from django.contrib import messages
 from django.shortcuts import redirect,render
 from django.urls import reverse_lazy, reverse
+from django.http import HttpRequest
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
 from rest_framework.views import APIView
@@ -135,12 +136,17 @@ class ProjectRecommendationView(APIView):
 
 @login_required
 def project_recommendation_view(request):
-    api_url = request.build_absolute_uri(reverse('get-recommendations'))
+    #api_url = request.build_absolute_uri(reverse('get-recommendations'))
     #api_url = f"http://localhost:{os.getenv('PORT', '8000')}" + reverse("get-recommendations")
-    response = requests.get(api_url,cookies=request.COOKIES)
+    #response = requests.get(api_url,cookies=request.COOKIES)
+
+    drf_request = HttpRequest()
+    drf_request.method = 'GET'
+    drf_request.user = request.user
+    response = ProjectRecommendationView.as_view()(drf_request)
 
     if response.status_code == 200:
-        projects = response.json().get("recommendations",[])
+        projects = response.data.get("recommendations",[])
     else:
         projects = []
     return render(request,template_name="projects/view_recommendations.html",context={"projects":projects})
