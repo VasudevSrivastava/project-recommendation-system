@@ -135,8 +135,8 @@ class ProjectRecommendationView(APIView):
 
 @login_required
 def project_recommendation_view(request):
-    #api_url = request.build_absolute_uri(reverse('get-recommendations'))
-    api_url = f"http://localhost:{os.getenv('PORT', '8000')}" + reverse("get-recommendations")
+    api_url = request.build_absolute_uri(reverse('get-recommendations'))
+    #api_url = f"http://localhost:{os.getenv('PORT', '8000')}" + reverse("get-recommendations")
     response = requests.get(api_url,cookies=request.COOKIES)
 
     if response.status_code == 200:
