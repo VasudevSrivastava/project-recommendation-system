@@ -8,7 +8,7 @@
     <div class=" list-group justify-content-center" >
         {% for project in projects %}
             <div class="list-group-item list-group-item-action shadow-sm mb-3 mx-auto" style="width: 700px;">
-                <h5 class=" "><a href = "{% url 'project-detail' project.id %}"> {{project.title}} </a>  </h5>
+                <h5 class="text-success"><a href = "{% url 'project-detail' project.id %}" class="text-success"> {{project.title}} </a>  </h5>
 
                 {% if project.rating %}
                     <p class="text-muted"> {{project.rating}} ⭐</p>
