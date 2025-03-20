@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'skills',
     'core',
     'rest_framework',
+    'storages',
 
 ]
 
@@ -137,8 +138,19 @@ STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
 
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+
+AWS_ACCESS_KEY_ID = 'AKIAWIJIUTVKKPUW47EQ'
+AWS_SECRET_ACCESS_KEY = 'nguD8zuYD/SFK+h/Qn8gEPrVm9K+PlLg/aJiEGfk'
+AWS_STORAGE_BUCKET_NAME = 'vasu-django-bucket'
+AWS_S3_REGION_NAME = 'eu-north-1'  # e.g., us-east-1
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+
+MEDIA_URL = f"{AWS_S3_CUSTOM_DOMAIN}/"
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -157,3 +169,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER= os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+
+
