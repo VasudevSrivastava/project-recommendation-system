@@ -13,14 +13,26 @@
                     <form method="POST">
                         {% csrf_token %}
                         <fieldset class="form-group">
-                            {{ form|crispy }}
+                            {% for field in form %}
+                                {% if field.name != "skill" %}
+                                    {{ field|as_crispy_field }}
+                                {% endif %}
+                            {% endfor %}
                         </fieldset>
+                    
+                        <p> Skills : </p>
+                        <div class="skill-checkbox-group" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                            {{ form.skill }}
+                        </div>
+                        
+                    
                         <div class="text-center mt-3">
                             <button class="btn btn-primary px-4 py-2 rounded-pill" type="submit">
                                 Submit
                             </button>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>

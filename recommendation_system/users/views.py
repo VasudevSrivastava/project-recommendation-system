@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
 from projects.models import SavedProject, Project
 from skills.models import Skill
+from django.contrib.auth.models import User
 
 def register(request):
     if request.method == 'POST':
@@ -48,3 +49,15 @@ def update_profile(request):
         'p_form':p_form,
     }
     return render(request, 'users/update_profile.html', context)
+
+
+
+def user_profile(request,username):
+   # user = User.objects.get(username=username)
+    user = get_object_or_404(User,username=username)
+    user_projects = Project.objects.filter(user=user)
+    context = {
+        'user': user,
+        'user_projects':user_projects,
+    }
+    return render(request, 'users/user_profile.html', context)

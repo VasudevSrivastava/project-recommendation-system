@@ -2,30 +2,48 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h3 class="mb-3 text-primary">Discover Projects</h3>
+    <h2 class="mb-3 text-dark">Discover Projects</h2>
 
     <!-- Filter & Sorting -->
     <div class="p-3 bg-light rounded shadow-sm mb-4">
         <h5 class="text-dark">Filter Projects</h5>
-        <p class="text-muted"> Hold CTRL to select skills </p>
         <form method="GET" action="{% url 'project-list' %}" class="d-flex flex-wrap gap-3">
-            <select name="filters" class="form-select w-auto" multiple>
-                {% for skill in skills %}
-                    <option value="{{ skill.name }}" {% if skill.name in selected_filters %}selected{% endif %}>
-                        {{ skill.name|title }}
-                    </option>
-                {% endfor %}
-            </select>
+            <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle" type="button" id="skillDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Skills
+                </button>
+                <ul class="dropdown-menu p-3" aria-labelledby="skillDropdown" style="max-height: 300px; overflow-y: auto;">
+                    {% for skill in skills %}
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="filters" value="{{ skill.name }}"
+                                   id="skill-{{ forloop.counter }}"
+                                   {% if skill.name in selected_filters %}checked{% endif %}>
+                            <label class="form-check-label" for="skill-{{ forloop.counter }}">
+                                {{ skill.name|title }}
+                            </label>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        
+            <!-- Hidden Inputs to Retain Selections -->
+            {% for selected in selected_filters %}
+                <input type="hidden" name="filters" value="{{ selected }}">
+            {% endfor %}
+        
             <p class="text-dark"> Sort By :</p>
-            <select name="sort" class="form-select-sm w-auto" style="height: 35px;" >
-                <option value="-created_at">Newest</option>
-                <option value="created_at">Oldest</option>
-                <option value="-avg_rating">Highest Rated</option>
-                <option value="avg_rating">Lowest Rated</option>
+            <select name="sort" class="form-select-sm w-auto" style="height: 35px;">
+                <option value="-created_at" {% if request.GET.sort == "-created_at" %}selected{% endif %}>Newest</option>
+                <option value="created_at" {% if request.GET.sort == "created_at" %}selected{% endif %}>Oldest</option>
+                <option value="-avg_rating" {% if request.GET.sort == "-avg_rating" %}selected{% endif %}>Highest Rated</option>
+                <option value="avg_rating" {% if request.GET.sort == "avg_rating" %}selected{% endif %}>Lowest Rated</option>
             </select>
-
+        
             <button type="submit" class="btn btn-primary px-4" style="height: 35px;">Apply</button>
         </form>
+        
     </div>
 
     <!-- Projects Grid -->
@@ -39,7 +57,7 @@
                                 {{ project.title }}
                             </a>
                         </h4>
-                        <h6 class="text-muted "> <span class="fw-bold "> By {{ project.user }}</span></h6>
+                        <h6 class="text-muted "> <span class="fw-bold "> By <a href="{% url 'user-profile' project.user.username %} " class="fw-bold text-muted text-decoration-none">{{ project.user }} </a></span></h6>
                         <p class="small text-muted ">{{ project.created_at|date:"M d, Y" }}</p>
                         <p class="card-text ">{{ project.description|truncatewords:20 }}</p>
                         

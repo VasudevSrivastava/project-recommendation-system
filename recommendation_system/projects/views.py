@@ -70,6 +70,8 @@ class ProjectListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        selected_filters= self.request.GET.getlist("filters")
+        context["selected_filters"] = selected_filters
         context["skills"] = Skill.objects.all()
         return context
         

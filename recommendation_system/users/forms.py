@@ -21,7 +21,7 @@ class UserUpdateForm(forms.ModelForm):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['about','skills','image']
+        fields = ['about','image','skills']
 
         widgets = {
             "skills":forms.SelectMultiple(attrs={"class":"form-control"})
