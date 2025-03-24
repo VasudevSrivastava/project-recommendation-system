@@ -1,3 +1,6 @@
+
+
+
 """
 Django settings for recommendation_system project.
 
@@ -118,6 +121,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -135,22 +149,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
-MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
 
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
-AWS_ACCESS_KEY_ID = 'AKIAWIJIUTVKKPUW47EQ'
-AWS_SECRET_ACCESS_KEY = 'nguD8zuYD/SFK+h/Qn8gEPrVm9K+PlLg/aJiEGfk'
-AWS_STORAGE_BUCKET_NAME = 'vasu-django-bucket'
-AWS_S3_REGION_NAME = 'eu-north-1'  # e.g., us-east-1
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 
-MEDIA_URL = f"{AWS_S3_CUSTOM_DOMAIN}/"
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -169,5 +177,23 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER= os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+
+
+
+
+AWS_ACCESS_KEY_ID = 'AKIAWIJIUTVKKPUW47EQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'vasu-django-bucket'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL= None
+AWS_S3_REGION_NAME = 'eu-north-1'  
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+
+MEDIA_ROOT = ""
+#MEDIA_URL = "https://vasu-django-bucket.s3.eu-north-1.amazonaws.com/media/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
