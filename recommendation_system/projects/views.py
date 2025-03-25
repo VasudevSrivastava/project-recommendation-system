@@ -58,7 +58,7 @@ class ProjectListView(ListView):
     def get_queryset(self):
         projects = Project.objects.all().annotate(avg_rating=Avg("ratings__rating"))
 
-        filters= self.request.GET.getlist("filters")
+        filters = self.request.GET.getlist("filters")
         
         if filters:
             projects = projects.filter(skill__name__in=filters)
@@ -81,6 +81,7 @@ class ProjectListView(ListView):
 class ProjectUpdateView(UpdateView):
     model = Project
     form_class = ProjectForm
+    success_url = reverse_lazy('project-list')
 
     def form_valid(self, form):
         project = form.save(commit=False)

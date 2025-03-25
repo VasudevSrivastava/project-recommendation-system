@@ -1,10 +1,16 @@
 {% extends 'core/base.html' %}
-{% block content %}     
-        <h1> You have been logged out </h1>
-        <div class=" border-top-pt-3"> 
-            <small class="text-muted"> <a href="{% url 'login' %}"> Login Again </a> </small>
-        </div>
-        
+{% block content %}   
 
+<div class="container d-flex justify-content-center align-items-center" style="height: 60vh;">
+    <div class="text-center">
+        <h1 class="fw-bold text-danger">You have been logged out</h1>
+        <div class="border-top pt-3 mt-3"> 
+            <small class="text-muted">
+                Want to log back in? 
+                <a href="{% url 'login' %}" class="text-primary fw-semibold">Login Again</a>
+            </small>
+        </div>
+    </div>
+</div>
 
 {% endblock content %}
