@@ -3,18 +3,17 @@ from django.forms import ModelForm
 from django import forms
 from skills.models import Skill
 
-class ProjectForm(ModelForm):
-    skill = forms.ModelMultipleChoiceField(
-        queryset=Skill.objects.all(),
-        widget=forms.CheckboxSelectMultiple,  # Not used directly but needed for validation
-        required=True
-    )
+class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ["title","description","skill","github_link"]
-        # widgets = {
-        #     "skill":forms.SelectMultiple(attrs={"class":"form-control"})
-        # }
+        fields = ["title", "domain", "description", "skill", "github_link"]
+
+    def clean_domain(self):
+        domains = self.cleaned_data.get("domain", [])
+        if not (1 <= len(domains) <= 3):
+            raise forms.ValidationError("You must select between 1 and 3 domains.")
+        return domains
+
 
 class RatingForm(ModelForm):
     class Meta:

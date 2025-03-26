@@ -1,6 +1,6 @@
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
 from .models import Project, SavedProject, Rating 
-from skills.models import Skill
+from skills.models import Skill, Domain
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ProjectForm
 from django.contrib import messages
@@ -58,10 +58,15 @@ class ProjectListView(ListView):
     def get_queryset(self):
         projects = Project.objects.all().annotate(avg_rating=Avg("ratings__rating"))
 
-        filters = self.request.GET.getlist("filters")
+        skill_filters = self.request.GET.getlist("skill_filters")
         
-        if filters:
-            projects = projects.filter(skill__name__in=filters)
+        if skill_filters:
+            projects = projects.filter(skill__name__in=skill_filters)
+
+        domain_filters = self.request.GET.getlist("domain_filters")
+        
+        if domain_filters:
+            projects = projects.filter(domain__name__in=domain_filters)
        # print(projects)
         sort_by = self.request.GET.get("sort",'-created_at')
         projects = projects.order_by(sort_by)
@@ -70,9 +75,15 @@ class ProjectListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        selected_filters= self.request.GET.getlist("filters")
-        context["selected_filters"] = selected_filters
+
+        selected_domain_filters= self.request.GET.getlist("domain_filters")
+        context["selected_domain_filters"] = selected_domain_filters
+
+        selected_skill_filters= self.request.GET.getlist("skill_filters")
+        context["selected_skill_filters"] = selected_skill_filters
+
         context["skills"] = Skill.objects.all()
+        context["domains"] = Domain.objects.all()
         return context
         
 
@@ -144,7 +155,7 @@ def project_recommendation_view(request):
     #response = requests.get(api_url,cookies=request.COOKIES)
 
     drf_request = HttpRequest()
-    drf_request.method = 'GET'
+    drf_request.method = 'GET'                     
     drf_request.user = request.user
     response = ProjectRecommendationView.as_view()(drf_request)
 

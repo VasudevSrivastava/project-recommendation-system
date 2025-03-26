@@ -16,9 +16,9 @@
                     {% for skill in skills %}
                     <li>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="filters" value="{{ skill.name }}"
+                            <input class="form-check-input" type="checkbox" name="skill_filters" value="{{ skill.name }}"
                                    id="skill-{{ forloop.counter }}"
-                                   {% if skill.name in selected_filters %}checked{% endif %}>
+                                   {% if skill.name in selected_skill_filters %}checked{% endif %}>
                             <label class="form-check-label" for="skill-{{ forloop.counter }}">
                                 {{ skill.name|title }}
                             </label>
@@ -28,7 +28,25 @@
                 </ul>
             </div>
         
-            
+            <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle" type="button" id="skillDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Select Domain
+                </button>
+                <ul class="dropdown-menu p-3" aria-labelledby="skillDropdown" style="max-height: 300px; overflow-y: auto;">
+                    {% for domain in domains %}
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="domain_filters" value="{{ domain.name }}"
+                                   id="domain-{{ forloop.counter }}"
+                                   {% if domain.name in selected_domain_filters %}checked{% endif %}>
+                            <label class="form-check-label" for="domain-{{ forloop.counter }}">
+                                {{ domain.name|title }}
+                            </label>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         
             <p class="text-dark"> Sort By :</p>
             <select name="sort" class="form-select-sm w-auto" style="height: 35px;">
@@ -56,12 +74,17 @@
                         </h4>
                         <h6 class="text-muted "> <span class="fw-bold "> By <a href="{% url 'user-profile' project.user.username %} " class="fw-bold text-muted text-decoration-none">{{ project.user }} </a></span></h6>
                         <p class="small text-muted ">{{ project.created_at|date:"M d, Y" }}</p>
+                        <p class="mt-2">
+                            {% for domain in project.domain.all %}
+                                <span class="badge bg-secondary">{{ domain.name }}</span>
+                            {% endfor %}
+                        </p>
                         <p class="card-text ">{{ project.description|truncatewords:20 }}</p>
                         
                         <!-- Skills -->
                         <p class="mt-2">
                             {% for skill in project.skill.all %}
-                                <span class="badge bg-secondary">{{ skill.name }}</span>
+                                <span class="badge bg-warning">{{ skill.name }}</span>
                             {% endfor %}
                         </p>
 

@@ -10,9 +10,12 @@
             <h6 class="text-muted">Created by <strong><a href="{% url 'user-profile' project.user.username %} " class="fw-semibold text-muted text-decoration-none">{{ project.user }} </a></strong> on {{ project.created_at|date:"M d, Y" }}</h6>
 
             <!-- Skills Required -->
+            {% for domain in project.domain.all %}
+                <span class="badge bg-secondary me-1">{{ domain.name }}</span>
+            {% endfor %}
             <h5 class="mt-3"><strong>Skills Required:</strong></h5>
             {% for skill in project.skill.all %}
-                <span class="badge bg-secondary me-1">{{ skill.name }}</span>
+                <span class="badge bg-warning me-1">{{ skill.name }}</span>
             {% empty %}
                 <p class="text-muted">No skills specified.</p>
             {% endfor %}
