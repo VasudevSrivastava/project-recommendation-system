@@ -1,1 +1,51 @@
-<h1> about page </h1>
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="fw-bold">About Project Recommendation System</h1>
+        <p class="text-muted">Helping developers find and contribute to the best projects.</p>
+    </div>
+
+    <!-- Project Overview -->
+    <section class="mt-4">
+        <h3 class="fw-semibold">What is this project?</h3>
+        <p>
+            The Project Recommendation System is designed to help developers find projects that match their skills and interests.
+            It also allows users to contribute to open-source projects, discuss ideas, and collaborate with others.
+        </p>
+    </section>
+
+    <!-- GitHub Repository -->
+    <section class="mt-4">
+        <h3 class="fw-semibold">GitHub Repository</h3>
+        <p>View the source code and contribute to the project:</p>
+        <a href="https://github.com/VasudevSrivastava/project-recommendation-system" class="btn btn-dark" target="_blank">
+            <i class="bi bi-github"></i> GitHub Repository
+        </a>
+    </section>
+
+    <section class="mt-5">
+        <h3 class="fw-semibold">Meet the Team</h3>
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="https://vasu-django-bucket.s3.amazonaws.com/profile_pics/vasud_profile2_CVzPvJR.jpg" class="rounded-circle" alt="Vasudev Srivastava" style="width:120px; height:120px; object-fit:cover">
+                <h5 class="mt-2">Vasudev Srivastava</h5>
+                <p class="text-muted">Lead Developer</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-5">
+        <h3 class="fw-semibold">Contact Us</h3>
+        <p>Feel free to reach out if you have any questions or suggestions.</p>
+        
+        <ul class="list-unstyled">
+            <li><i class="bi bi-envelope-fill"></i> Email: <a href="mailto:your.vasudevsrivas19@gmail.com">vasudevsrivas19@gmail.com</a></li>
+            {% comment %} <li><i class="bi bi-twitter"></i> Twitter: <a href="https://twitter.com/yourhandle" target="_blank">@yourhandle</a></li> {% endcomment %}
+            <li><i class="bi bi-github"></i> GitHub: <a href="https://github.com/VasudevSrivastava" target="_blank">github.com/VasudevSrivastava</a></li>
+            <li><i class="bi bi-linkedin"></i> LinkedIn: <a href="https://www.linkedin.com/in/vsdvsrivastava/" target="_blank">linkedin.com/in/vsdvsrivastava</a></li>
+        </ul>
+    </section>
+</div>
+{% endblock %}

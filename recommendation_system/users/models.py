@@ -8,6 +8,8 @@ class Profile(models.Model):
     about = models.CharField(max_length=100, blank = True)
     skills = models.ManyToManyField(Skill)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    linkedin_profile = models.URLField(null=True, blank=False)
+    github_profile = models.URLField(null=True, blank=False)
 
     def __str__(self):
         return f'{self.user.username} Profile'

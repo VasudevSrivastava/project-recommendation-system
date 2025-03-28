@@ -22,14 +22,10 @@ def home(request):
         upvotes=F('project_upvotes') + F('post_upvotes')
     ).order_by('-upvotes')
 
-    # discussion_scores = User.objects.annotate(
-    # upvotes=Coalesce(Sum('project_comments__helpful_votes',), Value(0))).order_by('-upvotes')
     
 
-
-
-    project_paginator = Paginator(project_scores, 5)
-    discussion_paginator = Paginator(discussion_scores, 5)
+    project_paginator = Paginator(project_scores, 10)
+    discussion_paginator = Paginator(discussion_scores, 10)
 
     project_page = request.GET.get("project_page")
     discussion_page = request.GET.get("discussion_page")
@@ -43,6 +39,11 @@ def home(request):
                }
     
     return render(request,'core/home.html',context)
+
+
+def about(request):
+    
+    return render(request,'core/about.html')
     
 class PostCreateView(LoginRequiredMixin,CreateView):
     model = Post
