@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="max-width: 50rem; width: 100%;">
+        <div class="card-body">
+            <h2 class="card-title text-success fw-bold">{{ post.title }}</h2>
+            <h6 class="text-muted">
+                Created by 
+                <strong>
+                    <a href="{% url 'user-profile' post.user.username %}" class="fw-semibold text-muted text-decoration-none">
+                        {{ post.user }}
+                    </a>
+                </strong> 
+                on {{ post.created_at|date:"M d, Y" }}
+            </h6>
+
+            <!-- Post Description -->
+            <p class="card-text mt-4">{{ post.description }}</p>
+
+            <!-- Rating & Views Section -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <span class="text-muted"><i class="bi bi-hand-thumbs-up-fill"></i> {{ post.votes }} votes</span>
+                    <span class="text-muted ms-3"><i class="bi bi-eye-fill"></i> {{ post.views }} views</span>
+                </div>
+
+                {% if user == post.user %}
+                    <a href="{% url 'post-update' post.id %}" class="btn btn-dark btn-sm">Update</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Discussion Section -->
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="max-width: 50rem; width: 100%;">
+        <div class="card-body">
+            <h3 class="card-title text-primary mb-3">💬 Discussion</h3>
+
+            <!-- Add New Comment -->
+            <form method="POST" action="{% url 'add-comment' post.id %}" class="mb-4">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <textarea name="content" class="form-control" id="commentContent" rows="3" placeholder="Write a comment..." required></textarea>
+                    <label for="commentContent">Write a comment...</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
+            </form>
+
+            <!-- Comments Section -->
+            {% if nested_comments %}
+                <ul class="list-group list-group-flush">
+                    {% for comment in nested_comments %}
+                        {% include "core/comment_thread.html" with comment=comment %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No comments yet. Be the first to start a discussion!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Back to Posts Button -->
+<div class="text-center mt-4">
+    <a href="{% url 'post-list' %}" class="btn btn-outline-secondary">
+        ← Back to posts
+    </a>
+</div>
+
+{% endblock %}

@@ -38,9 +38,9 @@ class SavedProject(models.Model):
         unique_together = ('user','project')
 
 
-class Comment(models.Model):
+class ProjectComment(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, null=True,on_delete=models.SET_NULL, related_name='comments')
+    user = models.ForeignKey(User, null=True,on_delete=models.SET_NULL, related_name='project_comments')
     parent = models.ForeignKey('self',null=True,blank=True, on_delete=models.CASCADE, related_name='replies')
     content = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)

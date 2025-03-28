@@ -1,5 +1,5 @@
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
-from .models import Project, SavedProject, Rating, Comment
+from .models import Project, SavedProject, Rating, ProjectComment
 from skills.models import Skill, Domain
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ProjectForm
@@ -45,14 +45,20 @@ class ProjectDetailView(DetailView):
             rating_obj = Rating.objects.filter(user=self.request.user, project=project).first()
             if rating_obj:
                 user_rating = rating_obj.rating
-        comments = project.comments.select_related("user","parent").order_by("created_at")
-        nested_comments = get_comment_tree(comments)
         context["user_rating"] = user_rating 
         context["rating"] = round(rating.get("rating__avg"),2)
+
+
         if self.request.user.is_authenticated:
             context["is_saved"] = SavedProject.objects.filter(user=self.request.user,project=project).exists()
         else:
             context["is_saved"] = False
+
+        #comment logic
+        comments = project.comments.select_related("user","parent").order_by("created_at")
+        nested_comments = get_comment_tree(comments)
+
+        
         context["nested_comments"] = nested_comments
         return context
         
@@ -179,17 +185,17 @@ def add_comment(request,project_id):
     if request.method == 'POST':
             parent_id = request.POST.get('parent_id')
             content = request.POST.get('content')
-            parent = get_object_or_404(Comment, id=parent_id) if parent_id else None
+            parent = get_object_or_404(ProjectComment, id=parent_id) if parent_id else None
 
             if content:
-                Comment.objects.create(user=request.user, project=project, content=content, parent=parent)
+                ProjectComment.objects.create(user=request.user, project=project, content=content, parent=parent)
 
     return redirect('project-detail', pk=project_id)
 
 
 @login_required
 def upvote_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(ProjectComment, id=comment_id)
     comment.vote_helpful()
     return redirect('project-detail', pk=comment.project.id)\
     
@@ -212,7 +218,7 @@ def get_comment_tree(comments):
 
 @login_required
 def edit_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    comment = get_object_or_404(ProjectComment, id=comment_id, user=request.user)
 
     if request.method == 'POST':
         comment.content = request.POST.get("content")
@@ -223,7 +229,7 @@ def edit_comment(request, comment_id):
 
 @login_required
 def delete_comment(request,comment_id):
-    comment = get_object_or_404(Comment,id=comment_id,user=request.user)
+    comment = get_object_or_404(ProjectComment,id=comment_id,user=request.user)
     project = comment.project    
     comment.delete()
 

@@ -1,0 +1,42 @@
+<li class="list-group-item border rounded p-3 mb-2 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center">
+        <strong class="text-primary">{{ comment.user.username }}</strong>
+        <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+    </div>
+    <p class="mb-2 text-dark">{{ comment.content }}</p>
+
+    <div class="d-flex align-items-center">
+        <a href="{% url 'upvote-comment' comment.id %}" class="btn btn-outline-success btn-sm me-2">
+            👍 Helpful ({{ comment.helpful_votes }})
+        </a>
+        
+        <button class="btn btn-outline-secondary btn-sm reply-btn">Reply</button>
+        <div class="ms-auto">
+            {% if comment.user == request.user %}
+                <a href="{% url 'edit-comment' comment.id %}" class="btn btn-light btn-sm text-muted border-0 me-2">✏️ Edit</a>
+                <a href="{% url 'delete-comment' comment.id %}" class="btn btn-light btn-sm text-muted border-0 me-2">❌ Delete</a>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="reply-container mt-2 d-none">
+        <form method="POST" action="{% url 'add-comment' comment.post.id %}" class="mt-2">
+            {% csrf_token %}
+            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+            <textarea class="form-control mb-2" name="content" rows="2" placeholder="Write your reply..." required></textarea>
+            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+            <button type="button" class="btn btn-sm btn-light cancel-reply">Cancel</button>
+        </form>
+    </div>
+
+    
+
+    {% if comment.nested_replies %}
+    <ul class="list-group list-group-flush ms-4 mt-3">
+        {% for reply in comment.nested_replies %}
+            {% include "core/comment_thread.html" with comment=reply %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>

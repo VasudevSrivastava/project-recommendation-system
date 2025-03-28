@@ -3,6 +3,10 @@
 
 -> pagination in projects
 
+-> create seperate posts model
+->linkedin in profile
+
+->delete Project and post options
 -> discusions section
 -> validation
 -> show comments in profile

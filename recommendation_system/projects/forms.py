@@ -1,4 +1,4 @@
-from .models import Project, Rating, Comment
+from .models import Project, Rating, ProjectComment
 from django.forms import ModelForm
 from django import forms
 from skills.models import Skill
