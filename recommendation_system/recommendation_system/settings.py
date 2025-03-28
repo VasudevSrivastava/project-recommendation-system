@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',
     'storages',
+    'django_extensions',
 
 ]
 

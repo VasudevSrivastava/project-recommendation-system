@@ -1,10 +1,10 @@
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView, DetailView
-from .models import Project, SavedProject, Rating 
+from .models import Project, SavedProject, Rating, Comment
 from skills.models import Skill, Domain
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ProjectForm
 from django.contrib import messages
-from django.shortcuts import redirect,render
+from django.shortcuts import redirect,render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.http import HttpRequest
 from django.contrib.auth.decorators import login_required
@@ -45,9 +45,15 @@ class ProjectDetailView(DetailView):
             rating_obj = Rating.objects.filter(user=self.request.user, project=project).first()
             if rating_obj:
                 user_rating = rating_obj.rating
-        context["user_rating"] = user_rating
+        comments = project.comments.select_related("user","parent").order_by("created_at")
+        nested_comments = get_comment_tree(comments)
+        context["user_rating"] = user_rating 
         context["rating"] = round(rating.get("rating__avg"),2)
-        context["is_saved"] = SavedProject.objects.filter(user=self.request.user,project=project).exists()
+        if self.request.user.is_authenticated:
+            context["is_saved"] = SavedProject.objects.filter(user=self.request.user,project=project).exists()
+        else:
+            context["is_saved"] = False
+        context["nested_comments"] = nested_comments
         return context
         
 
@@ -164,3 +170,61 @@ def project_recommendation_view(request):
     else:
         projects = []
     return render(request,template_name="projects/view_recommendations.html",context={"projects":projects})
+
+
+@login_required
+def add_comment(request,project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if request.method == 'POST':
+            parent_id = request.POST.get('parent_id')
+            content = request.POST.get('content')
+            parent = get_object_or_404(Comment, id=parent_id) if parent_id else None
+
+            if content:
+                Comment.objects.create(user=request.user, project=project, content=content, parent=parent)
+
+    return redirect('project-detail', pk=project_id)
+
+
+@login_required
+def upvote_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.vote_helpful()
+    return redirect('project-detail', pk=comment.project.id)\
+    
+
+def get_comment_tree(comments):
+    comment_map = {comment.id : comment for comment in comments}
+    tree = []
+
+    for comment in comments:
+        if comment.parent:
+            parent = comment_map.get(comment.parent.id)
+            if not hasattr(parent,"nested_replies"):
+                parent.nested_replies = []
+            parent.nested_replies.append(comment)
+        else:
+            tree.append(comment)
+
+    return tree
+
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+
+    if request.method == 'POST':
+        comment.content = request.POST.get("content")
+        comment.save()
+        return redirect('project-detail',pk=comment.project.id)
+    
+    return render(request,'projects/edit_comment.html',{"comment":comment})
+
+@login_required
+def delete_comment(request,comment_id):
+    comment = get_object_or_404(Comment,id=comment_id,user=request.user)
+    project = comment.project    
+    comment.delete()
+
+    return redirect('project-detail',pk=project.id)

@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h2>Edit Comment</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="content" class="form-control" rows="3" required>{{ comment.content }}</textarea>
+    <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
+    <a href="{% url 'project-detail' comment.project.id %}" class="btn btn-secondary mt-2">Cancel</a>
+</form>
+{% endblock %}

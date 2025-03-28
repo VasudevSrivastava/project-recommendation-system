@@ -13,4 +13,9 @@ urlpatterns = [
     path("<int:project_id>/rate", views.rate_project, name="project-rate"),
     path("api/recommendations/", views.ProjectRecommendationView.as_view(), name="get-recommendations"),
     path("recommendations/", views.project_recommendation_view, name="recommendations"),
+    path("comment/<int:project_id>/add", views.add_comment, name="add-comment"),
+    path("comment/<int:comment_id>/upvote", views.upvote_comment, name="upvote-comment"),
+    path("comment/<int:comment_id>/edit", views.edit_comment, name="edit-comment"),
+    path("comment/<int:comment_id>/delete", views.delete_comment, name="delete-comment"),
+    
 ]

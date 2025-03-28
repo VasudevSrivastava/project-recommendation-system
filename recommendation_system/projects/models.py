@@ -20,7 +20,6 @@ class Project(models.Model):
         return self.title
 
 
-
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name="ratings")
@@ -39,3 +38,17 @@ class SavedProject(models.Model):
         unique_together = ('user','project')
 
 
+class Comment(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, null=True,on_delete=models.SET_NULL, related_name='comments')
+    parent = models.ForeignKey('self',null=True,blank=True, on_delete=models.CASCADE, related_name='replies')
+    content = models.TextField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+    helpful_votes = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f'Comment by {self.user} on {self.project.title}'
+    
+    def vote_helpful(self):
+        self.helpful_votes += 1
+        self.save()

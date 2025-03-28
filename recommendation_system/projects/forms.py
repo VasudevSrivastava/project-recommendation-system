@@ -1,4 +1,4 @@
-from .models import Project, Rating
+from .models import Project, Rating, Comment
 from django.forms import ModelForm
 from django import forms
 from skills.models import Skill
@@ -19,3 +19,4 @@ class RatingForm(ModelForm):
     class Meta:
         model = Rating
         fields = ["rating"]
+
