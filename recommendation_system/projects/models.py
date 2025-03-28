@@ -21,7 +21,7 @@ class Project(models.Model):
 
 
 class Rating(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ratings")
     project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name="ratings")
     rating = models.IntegerField(null=True)
 

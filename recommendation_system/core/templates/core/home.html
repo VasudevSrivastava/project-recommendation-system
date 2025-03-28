@@ -18,21 +18,111 @@
     </div>
 </div>
 
-<!-- Top Contributors Section -->
 <div class="container mt-5">
-    <h2 class="mb-3 text-secondary fw-bold">🌟 Top Database Contributors</h2>
-    <div class="card shadow-lg p-3 border-0">
-        <ol class="list-group list-group-flush">
-            {% for user in top_users %}
-            <li class="list-group-item d-flex align-items-center">
-                <img src="{{ user.profile.image.url }}" alt="Profile Image" class="rounded-circle me-3" width="40" height="40">
-                <span class="fw-semibold"><a href="{% url 'user-profile' user.username %}" class="fw-semibold text-dark text-decoration-none" >{{ user.username }} </a></span>
-                <span class="ms-auto text-muted">Contributions: {{ user.contributions }}</span>
-            </li> 
-            {% empty %}
-            <li class="list-group-item text-muted">No contributors yet.</li>
-            {% endfor %}
-        </ol>
+    <div class="row">
+        <!-- Projects Leaderboard -->
+        <div class="col-md-6">
+            <h2 class="mb-3 text-secondary fw-bold">🌟 Projects Leaderboard</h2>
+            <div class="card shadow-lg p-3 border-0">
+                <ol class="list-group list-group-flush">
+                    {% for user in project_scores %}
+                    <li class="list-group-item d-flex align-items-center ">
+                        <span class="me-3 fw-bold">{{ forloop.counter }}.</span>
+                        <img src="{{ user.profile.image.url }}" alt="Profile Image" class="rounded-circle me-3" width="40" height="40">
+                        <span class="fw-semibold">
+                            <a href="{% url 'user-profile' user.username %}" class="text-dark text-decoration-none">{{ user.username }}</a>
+                        </span>
+                        <span class="ms-auto text-muted">⭐ {{ user.stars }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">No contributors yet.</li>
+                    {% endfor %}
+                </ol>
+
+                <!-- Pagination Controls -->
+                <nav>
+                    <ul class="pagination justify-content-center mt-3">
+                        {% if project_scores.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?project_page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?project_page={{ project_scores.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in project_scores.paginator.page_range %}
+                            {% if num >= project_scores.number|add:'-2' and num <= project_scores.number|add:'2' %}
+                                <li class="page-item {% if num == project_scores.number %}active{% endif %}">
+                                    <a class="page-link {% if num == project_scores.number %}bg-dark text-light{% else %}text-secondary border-secondary{% endif %}" href="?project_page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if project_scores.has_next %}
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?project_page={{ project_scores.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?project_page={{ project_scores.paginator.num_pages }}">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Discussions Leaderboard -->
+        <div class="col-md-6">
+            <h2 class="mb-3 text-secondary fw-bold">🌟 Discussions Leaderboard</h2>
+            <div class="card shadow-lg p-3 border-0">
+                <ol class="list-group list-group-flush">
+                    {% for user in discussion_scores %}
+                    <li class="list-group-item d-flex align-items-center ">
+                        <span class="me-3 fw-bold">{{ forloop.counter }}.</span>
+                        <img src="{{ user.profile.image.url }}" alt="Profile Image" class="rounded-circle me-3" width="40" height="40">
+                        <span class="fw-semibold">
+                            <a href="{% url 'user-profile' user.username %}" class="text-dark text-decoration-none">{{ user.username }}</a>
+                        </span>
+                        <span class="ms-auto text-muted">⬆️ {{ user.upvotes }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">No contributors yet.</li>
+                    {% endfor %}
+                </ol>
+
+                <!-- Pagination Controls -->
+                <nav>
+                    <ul class="pagination justify-content-center mt-3">
+                        {% if discussion_scores.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?discussion_page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?discussion_page={{ discussion_scores.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in discussion_scores.paginator.page_range %}
+                            {% if num >= discussion_scores.number|add:'-2' and num <= discussion_scores.number|add:'2' %}
+                                <li class="page-item {% if num == discussion_scores.number %}active{% endif %}">
+                                    <a class="page-link {% if num == discussion_scores.number %}bg-dark text-light{% else %}text-secondary border-secondary{% endif %}" href="?discussion_page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if discussion_scores.has_next %}
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?discussion_page={{ discussion_scores.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link text-secondary border-secondary" href="?discussion_page={{ discussion_scores.paginator.num_pages }}">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
