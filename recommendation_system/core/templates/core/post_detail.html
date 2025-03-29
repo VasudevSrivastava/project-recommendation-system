@@ -17,10 +17,8 @@
                 on {{ post.created_at|date:"M d, Y" }}
             </h6>
 
-            <!-- Post Description -->
             <p class="card-text mt-4">{{ post.description }}</p>
 
-            <!-- Rating & Views Section -->
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
                     <span class="text-muted"><i class="bi bi-hand-thumbs-up-fill"></i> {{ post.votes }} votes</span>
@@ -35,14 +33,12 @@
     </div>
 </div>
 
-<!-- Discussion Section -->
 <div class="container mt-5 d-flex justify-content-center">
     <div class="card shadow-lg p-4" style="max-width: 50rem; width: 100%;">
         <div class="card-body">
             <h3 class="card-title text-primary mb-3">💬 Discussion</h3>
 
-            <!-- Add New Comment -->
-            <form method="POST" action="{% url 'add-comment' post.id %}" class="mb-4">
+            <form method="POST" action="{% url 'core-add-comment' post.id %}" class="mb-4">
                 {% csrf_token %}
                 <div class="form-floating mb-3">
                     <textarea name="content" class="form-control" id="commentContent" rows="3" placeholder="Write a comment..." required></textarea>
@@ -51,7 +47,6 @@
                 <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
             </form>
 
-            <!-- Comments Section -->
             {% if nested_comments %}
                 <ul class="list-group list-group-flush">
                     {% for comment in nested_comments %}
@@ -65,7 +60,6 @@
     </div>
 </div>
 
-<!-- Back to Posts Button -->
 <div class="text-center mt-4">
     <a href="{% url 'post-list' %}" class="btn btn-outline-secondary">
         ← Back to posts

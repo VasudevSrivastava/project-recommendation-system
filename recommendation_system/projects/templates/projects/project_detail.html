@@ -9,7 +9,6 @@
             <h2 class="card-title text-success font-weight-bold">{{ project.title }}</h2>
             <h6 class="text-muted">Created by <strong><a href="{% url 'user-profile' project.user.username %} " class="fw-semibold text-muted text-decoration-none">{{ project.user }} </a></strong> on {{ project.created_at|date:"M d, Y" }}</h6>
 
-            <!-- Skills Required -->
             {% for domain in project.domain.all %}
                 <span class="badge bg-secondary me-1">{{ domain.name }}</span>
             {% endfor %}
@@ -20,10 +19,8 @@
                 <p class="text-muted">No skills specified.</p>
             {% endfor %}
 
-            <!-- Project Description -->
             <p class="card-text mt-4">{{ project.description }}</p>
 
-            <!-- Rating & Views Section -->
             <div class="d-flex flex-column align-items-end mt-3">
                 {% if rating %}
                     <h5 class="text-warning fw-bold">{{ rating }} ⭐</h5>
@@ -31,7 +28,6 @@
                 <span class="text-muted ">👁️ {{ project.views }} views</span>
             </div>
 
-            <!-- Save/Unsave Project -->
             <div class="mt-4">
                 {% if is_saved %}
                     <form action="{% url 'project-unsave' project.id %}" method="POST">
@@ -84,8 +80,7 @@
         <div class="card-body">
             <h3 class="card-title text-primary mb-3">💬 Discussion</h3>
 
-            <!-- Add New Comment -->
-            <form method="POST" action="{% url 'add-comment' project.id %}" class="mb-4">
+            <form method="POST" action="{% url 'project-add-comment' project.id %}" class="mb-4">
                 {% csrf_token %}
                 <div class="mb-3">
                     <textarea name="content" class="form-control" rows="3" placeholder="Write a comment..." required></textarea>
@@ -93,7 +88,6 @@
                 <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
             </form>
 
-            <!-- Comments Section -->
             {% if nested_comments %}
                 <ul class="list-group list-group-flush">
                     {% for comment in nested_comments %}
@@ -112,7 +106,6 @@
     <a href="{% url 'project-list' %}" class="btn btn-outline-secondary">← Back to Projects</a>
 </div>
 
-<!-- CSS for Rating Stars -->
 <style>
     .rating {
         display: flex;

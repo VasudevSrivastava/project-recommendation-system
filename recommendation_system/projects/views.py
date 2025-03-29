@@ -197,7 +197,7 @@ def add_comment(request,project_id):
 def upvote_comment(request, comment_id):
     comment = get_object_or_404(ProjectComment, id=comment_id)
     comment.vote_helpful()
-    return redirect('project-detail', pk=comment.project.id)\
+    return redirect('project-detail', pk=comment.project.id)
     
 
 def get_comment_tree(comments):
